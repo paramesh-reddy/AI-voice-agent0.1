@@ -1,9 +1,23 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
+  "build": {
+    "env": {
+      "VERCEL_EXPERIMENTAL_BACKENDS": "1"
+    }
+  },
   "functions": {
     "server.ts": {
-      "includeFiles": "{dist,frontend/dist}/**"
+      "includeFiles": "public/**"
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/register", "destination": "/index.html" },
+    { "source": "/dashboard", "destination": "/index.html" },
+    { "source": "/assistant", "destination": "/index.html" },
+    { "source": "/history", "destination": "/index.html" },
+    { "source": "/settings", "destination": "/index.html" },
+    { "source": "/profile", "destination": "/index.html" }
+  ]
 }

@@ -2,14 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
-import app from './backend/src/index.ts';
+import app from './backend/src/index.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
 function findFrontendDist(): string | null {
   const candidates = [
+    path.resolve(process.cwd(), 'public'),
     path.resolve(process.cwd(), 'frontend/dist'),
     path.resolve(process.cwd(), 'dist'),
+    path.resolve(here, 'public'),
     path.resolve(here, 'frontend/dist'),
     path.resolve(here, 'dist'),
   ];
@@ -19,12 +21,8 @@ function findFrontendDist(): string | null {
 const distPath = findFrontendDist();
 if (distPath) {
   app.use(express.static(distPath, { index: false }));
-  app.use((req, res, next) => {
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      next();
-      return;
-    }
-    if (req.path.startsWith('/api')) {
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || path.extname(req.path)) {
       next();
       return;
     }
@@ -46,3 +44,13 @@ app.use((err: unknown, _req: express.Request, res: express.Response, next: expre
 });
 
 export default app;
+
+const entry = (process.argv[1] || '').replace(/\\/g, '/');
+const startedDirectly = /(?:^|\/)server\.(?:ts|js|mjs|cjs)$/.test(entry);
+
+if (!process.env.VERCEL && startedDirectly) {
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`VoxAI listening on http://127.0.0.1:${port}`);
+  });
+}

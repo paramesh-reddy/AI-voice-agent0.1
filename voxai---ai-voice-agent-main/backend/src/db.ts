@@ -1,4 +1,4 @@
-import './env';
+import './env.js';
 import { Pool } from 'pg';
 
 export interface User {
@@ -72,6 +72,10 @@ export const pool = new Pool({
   max: 5,
   idleTimeoutMillis: 20000,
   connectionTimeoutMillis: 8000,
+});
+
+pool.on('error', (err) => {
+  console.error('Postgres pool error:', err.message);
 });
 
 function iso(value: Date | string | null | undefined): string {

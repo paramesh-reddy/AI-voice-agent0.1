@@ -1,4 +1,4 @@
-import './env';
+import './env.js';
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import multer from 'multer';
@@ -20,7 +20,7 @@ import {
   updateSettings,
   updateUser,
   User,
-} from './db';
+} from './db.js';
 import {
   AuthRequest,
   comparePassword,
@@ -31,8 +31,8 @@ import {
   requireAuth,
   revokeRefreshToken,
   verifyRefreshToken,
-} from './auth';
-import { generateChatResponse, openaiConfigured, synthesizeSpeech, transcribeAudio } from './ai';
+} from './auth.js';
+import { generateChatResponse, openaiConfigured, synthesizeSpeech, transcribeAudio } from './ai.js';
 
 const app = express();
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
@@ -458,11 +458,7 @@ const onVercel = Boolean(process.env.VERCEL);
 const entry = (process.argv[1] || '').replace(/\\/g, '/');
 const startedDirectly = /(?:^|\/)index\.(?:ts|js|mjs|cjs)$/.test(entry);
 
-if (onVercel) {
-  whenReady().catch((err) => {
-    console.error('Database unavailable:', err instanceof Error ? err.message : err);
-  });
-} else if (startedDirectly) {
+if (!onVercel && startedDirectly) {
   whenReady()
     .then(() => {
       app.listen(port, '0.0.0.0', () => {

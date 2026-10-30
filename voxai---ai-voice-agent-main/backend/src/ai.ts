@@ -1,6 +1,6 @@
 import OpenAI, { toFile } from 'openai';
-import { Message } from './db';
-import { getCurrentWeather } from './tools';
+import { Message } from './db.js';
+import { getCurrentWeather } from './tools.js';
 
 const LANGUAGE_NAMES: Record<string, string> = {
   'en-US': 'English (United States)',
